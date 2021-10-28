@@ -28,3 +28,25 @@ FROM (
     FROM OCCUPATIONS
 ) AS occ_row
 GROUP BY row_num;
+
+SELECT founders.company_code, founders.founder, company_stats.lead_manager_count, company_stats.senior_manager_count, company_stats.manager_count, company_stats.employee_count
+FROM 
+    (
+        SELECT DISTINCT company_code, founder
+        FROM Company
+    ) AS founders
+    JOIN
+    (
+        SELECT company_code, count(distinct lead_manager_code) AS lead_manager_count, count(distinct senior_manager_code) AS senior_manager_count, count(distinct manager_code) AS manager_count, count(distinct employee_code) AS employee_count
+        FROM Employee
+        GROUP BY company_code
+    ) AS company_stats
+    ON founders.company_code = company_stats.company_code
+ORDER BY founders.company_code;
+
+SELECT N, CASE 
+        WHEN P IS NULL THEN "Root"
+        WHEN N IN (SELECT P FROM BST) THEN "Inner"
+        ELSE "Leaf" END
+FROM BST
+ORDER BY N;
